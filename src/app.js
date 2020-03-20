@@ -1,14 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import TodoItem from './TodoItem';
+import "./app.css";
+import TodoList from './components/TodoList';
 
 class App extends React.Component {
+  constructor(){
+    super();
+    this.state = {
+      user : ""
+    }
+  }
+
     render() {
         return (
             <div>
-            <h1>Welcome to rr!</h1>
-            
-            <TodoItem/>
+              <h1>To do list</h1>
+              <TodoList/>
             </div>
         )
     }
