@@ -1,0 +1,13 @@
+version: '2'
+services:
+  database:
+    image: "postgres" # use latest official postgres version
+    environment:
+      POSTGRES_USER: "db_user"
+      POSTGRES_PASSWORD: "password"
+      POSTGRESS_DB: "db_name"
+    volumes:
+      - database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
+
+volumes:
+  database-data: # named volumes can be managed easier using docker-compose

@@ -5,48 +5,37 @@ class TodoItem extends Component{
     super(props);
     this.state = {
       updateChecked : false,
-      post : this.props.text
+      curr_post : this.props.item.text
     }
     this.deleteTodo = this.deleteTodo.bind(this);
+    this.updateTodo = this.updateTodo.bind(this);
     this.setUpdateCheck = this.setUpdateCheck.bind(this);
-    this.updatePost = this.updatePost.bind(this);
-    this.postUpdate = this.postUpdate.bind(this);
+    this.updatePostValue = this.updatePostValue.bind(this);
+    this.reInitPostValue = this.reInitPostValue.bind(this);
   }
 
-  updatePost(e){
-    this.setState({post:e.target.value});
+  updatePostValue(e){
+    this.setState({curr_post:e.target.value});
   }
 
-  postUpdate(e){
-    var newTodo = {
-      id: this.props.item.id,
-      post: this.post,
-      date: this.props.item.date
-    };
-    const options = {
-      method : 'POST',
-      headers : {
-        'Content-Type': 'application/json'
-      },
-      body : JSON.stringify(this.props.item)
-    };
-    fetch('/api/updateTodo',options);
+  reInitPostValue(e){
+    this.setState({curr_post:this.props.item.text});
+    this.setState({updateChecked:!this.state.updateChecked});
+  }
+
+  updateTodo(e){
+    e.preventDefault();
+    this.props.updateTodo(this.props.item.id,this.state.curr_post);
+    this.setState({updateChecked:!this.state.updateChecked});
+    console.log('update');
   }
 
   setUpdateCheck(e){
-    console.log('updated');
     this.setState({updateChecked:!this.state.updateChecked});
   }
 
   deleteTodo(e){
-    const options = {
-      method : 'POST',
-      headers : {
-        'Content-Type': 'application/json'
-      },
-      body : JSON.stringify(this.props.item)
-    };
-    fetch('/api/deleteTodo',options);
+    this.props.deleteTodo(this.props.item.id);
   }
 
   render(){
@@ -57,13 +46,13 @@ class TodoItem extends Component{
         !this.state.updateChecked?
         <div className="todoItem" >
           <div>
-            {this.props.text}
+            {this.props.item.text}
           </div>
           <div>
             <button className="btnEdit" onClick={this.setUpdateCheck}>Edit</button>
           </div>
           <div>
-            Date
+            {this.props.item.post_date}
           </div>
           <div>
             <button className="btnDlt" onClick={this.deleteTodo}>Delete</button>
@@ -72,10 +61,13 @@ class TodoItem extends Component{
         :
         <div className="todoItem" >
           <div>
-            <input type="text" value={this.state.post} onChange={this.updatePost}/>
+            <input type="text" value={this.state.curr_post} onChange={this.updatePostValue}/>
           </div>
           <div>
-            <button className="btnSave" onClick={this.postUpdate}>Save</button>
+            <button className="btnSave" onClick={this.updateTodo}>Save</button>
+          </div>
+          <div>
+            <button className="btnCancel" onClick={this.reInitPostValue}>Cancel</button>
           </div>
           <div>
             Date

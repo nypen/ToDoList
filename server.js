@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const Todo = require('./models/Posts');
 
 const db = require('./src/database');
 //test db
@@ -8,30 +9,54 @@ db.authenticate()
 .catch(err => console.log(err))
 
 app.use(express.json());
+var d = new Date();
 
-const todos  = [
-  {id:0 , post: "post1" , date: "adate"},
-  {id:1 , post: "post2" , date: "adate"},
-  {id:2 , post: "post3" , date: "adate"}
-];
 
 app.get('/api/todos' , (req,res) => {
-
-  res.json(todos);
+  console.log('Find all posts');
+  Todo.findAll({
+    attributes: ['id','text', 'post_date'],
+    where: {
+      user_id: 1
+    }
+  }).then(todos=>{
+    res.json(todos);
+  });
+//  res.json(todos);
 });
 
 app.post('/api/addtodo',(req,res) => {
-  todos.push(req.body);
-  console.log(todos);
+//  todos.push(req.body);
+  const a_todo = Todo.create({
+     text: req.body.text,
+     post_date : d,
+     user_id: req.body.user_id
+   });
+   res.sendStatus(200);
 });
 
-app.post('/api/deletetodo',(req,res) => {
-  console.log(req.body);
+app.post('/api/deleteTodo',(req,res) => {
+  Todo.destroy({
+    where:{
+      id:req.body.id
+    }
+  });
+  res.sendStatus(200);
 });
 
 app.post('/api/updateTodo',(req,res) => {
-  //na kanei update to post stin basi
-  console.log(req.body);
+  console.log('updating post with id '+req.body.id+ ' with text '+req.body.text);
+  Todo.update(
+    {
+      text: req.body.text
+    },
+    {
+      where:
+      {
+        id: req.body.id
+      }
+    }
+  ).then(res=>res.sendStatus(200));
 });
 
 

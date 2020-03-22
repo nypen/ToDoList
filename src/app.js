@@ -15,7 +15,8 @@ class App extends React.Component {
         return (
             <div>
               <h1>To do list</h1>
-              <TodoList/>
+              <TodoList
+                user_id={1}/>
             </div>
         )
     }
