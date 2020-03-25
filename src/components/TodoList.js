@@ -118,7 +118,8 @@ class TodoList extends Component {
 
     var update_order = {
       id: this.state.todos[e.newIndex].id,
-      index: e.newIndex
+      newIndex: e.newIndex,
+      oldIndex: e.oldIndex
     };
     const options = {
       method: "POST",

@@ -111,24 +111,42 @@ app.post("/api/updateTodo", async (req, res) => {
 
 app.post("/api/updateOrder", async (req, res) => {
   console.log('update order in server on '+req.body.id+ ' with new order '+req.body.index);
-  const incr = await Todo.increment(
-    {
-      order: -1
-    },
-    {
-      where:{
-        order:{
-          [Sequelize.Op.lte]: req.body.index
-        },
-        id:{
-          [Sequelize.Op.ne]: req.body.id
+  if(req.body.oldIndex<req.body.newIndex){
+    const incr = await Todo.increment(
+      {
+        order: -1
+      },
+      {
+        where:{
+          order:{
+            [Sequelize.Op.lte]: req.body.newIndex,
+            [Sequelize.Op.gt]: req.body.oldIndex
+          },
+          id:{
+            [Sequelize.Op.ne]: req.body.id
+          }
         }
-      }
-    });
-
+      });
+  }else{
+    const incr = await Todo.increment(
+      {
+        order: 1
+      },
+      {
+        where:{
+          order:{
+            [Sequelize.Op.gte]: req.body.newIndex,
+            [Sequelize.Op.lt]: req.body.oldIndex
+          },
+          id:{
+            [Sequelize.Op.ne]: req.body.id
+          }
+        }
+      });
+  }
   const updated = await Todo.update(
     {
-      order: req.body.index  //h seira pou tha mpei
+      order: req.body.newIndex  //h seira pou tha mpei
     },
     {
       where:{

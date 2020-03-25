@@ -63,6 +63,10 @@ class TodoItem extends Component{
           <div className="todoTitleEdit">
             <input className="edit-input" type="text" value={this.state.curr_post} onChange={this.updatePostValue}/>
           </div>
+
+          <div className="todoDate">
+              {this.props.item.post_date}
+          </div>
           <div>
             <button className="btnCancel" onClick={this.reInitPostValue}>Cancel</button>
           </div>
