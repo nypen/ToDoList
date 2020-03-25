@@ -1,25 +1,22 @@
 import React from 'react';
+import { Route, BrowserRouter} from 'react-router-dom'
 import ReactDOM from 'react-dom';
 import "./app.css";
-import TodoList from './components/TodoList';
+import Home from './components/Home';
+import SignIn from './components/SignIn';
+import SignUp from './components/Signup';
 
 class App extends React.Component {
-  constructor(){
-    super();
-    this.state = {
-      user : ""
-    }
-  }
-
     render() {
         return (
             <div>
-              <h1>To do list</h1>
-              <TodoList
-                user_id={1}/>
+              <Home/>
             </div>
+
         )
     }
 }
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<BrowserRouter>
+            		<App />
+            	</BrowserRouter>, document.getElementById('root'));

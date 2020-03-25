@@ -1,65 +1,146 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const Todo = require('./models/Posts');
+const bodyParser = require("body-parser");
+const Sequelize = require('sequelize');
+const db = require("./src/database");
+const Todo = require("./models/Posts");
+const User = require("./models/Users");
+const passport = require("./passport");
 
-const db = require('./src/database');
+
 //test db
 db.authenticate()
-.then(()=>console.log('db connected'))
-.catch(err => console.log(err))
+  .then(() => console.log("db connected"))
+  .catch(err => console.log(err));
 
-app.use(express.json());
-var d = new Date();
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(passport.initialize())
+app.use(passport.session())
 
 
-app.get('/api/todos' , (req,res) => {
-  console.log('Find all posts');
-  Todo.findAll({
-    attributes: ['id','text', 'post_date'],
+app.post("/api/signup",async (req,res) => {
+    const user = await User.findOne({ where: { username: req.body.username } });
+    if(user){
+      res.json({
+          error: `Sorry, that username already exists with ${req.body.username}`
+      })
+    }else{
+      const newUser = await User.create({
+        username: req.body.username,
+        password: req.body.password
+      })
+      res.json(newUser);
+    }
+  }
+);
+
+app.post('/api/signin', (req, res, next) => {
+  const { body: { user } } = req;
+  return passport.authenticate('local', (err, passportUser, info) => {
+    if(err) {
+      return next(err);
+    }
+    if(passportUser) {  //authenticated
+      console.log('user id '+passportUser.id)
+      return res.json({
+        user_id: passportUser.id,
+        username: passportUser.Username
+      });
+    }
+    return res.json({status:400});
+  })(req, res, next);
+});
+
+
+app.post("/api/todos", async (req, res) => {
+  console.log("Find all posts");
+  allTodos = await Todo.findAll({
+    attributes: ["id", "text", "post_date", "user_id","order"],
     where: {
-      user_id: 1
-    }
-  }).then(todos=>{
-    res.json(todos);
+      user_id: req.body.user_id
+    },
+    order:[['order', 'ASC']]
   });
-//  res.json(todos);
+
+  res.json(allTodos);
 });
 
-app.post('/api/addtodo',(req,res) => {
-//  todos.push(req.body);
-  const a_todo = Todo.create({
-     text: req.body.text,
-     post_date : d,
-     user_id: req.body.user_id
-   });
-   res.sendStatus(200);
+
+app.post("/api/addtodo", async (req, res) => {
+  var d = new Date();
+
+  const added = await Todo.create({
+    text: req.body.text,
+    post_date: d,
+    user_id: req.body.user_id,
+    order: req.body.order
+  });
+
+  res.json(added);
 });
 
-app.post('/api/deleteTodo',(req,res) => {
-  Todo.destroy({
-    where:{
-      id:req.body.id
+app.post("/api/deleteTodo", async (req, res) => {
+  await Todo.destroy({
+    where: {
+      id: req.body.id
     }
   });
-  res.sendStatus(200);
+
+  res.json({ id: req.body.id });
 });
 
-app.post('/api/updateTodo',(req,res) => {
-  console.log('updating post with id '+req.body.id+ ' with text '+req.body.text);
-  Todo.update(
+app.post("/api/updateTodo", async (req, res) => {
+  console.log(
+    "updating post with id " + req.body.id + " with text " + req.body.text
+  );
+  const updated = await Todo.update(
     {
       text: req.body.text
     },
     {
-      where:
-      {
+      where: {
         id: req.body.id
       }
     }
-  ).then(res=>res.sendStatus(200));
+  );
+
+  res.json(updated);
 });
+
+app.post("/api/updateOrder", async (req, res) => {
+  console.log('update order in server on '+req.body.id+ ' with new order '+req.body.index);
+  const incr = await Todo.increment(
+    {
+      order: -1
+    },
+    {
+      where:{
+        order:{
+          [Sequelize.Op.lte]: req.body.index
+        },
+        id:{
+          [Sequelize.Op.ne]: req.body.id
+        }
+      }
+    });
+
+  const updated = await Todo.update(
+    {
+      order: req.body.index  //h seira pou tha mpei
+    },
+    {
+      where:{
+        id: req.body.id
+      }
+    }
+  );
+  res.json(updated);
+});
+
 
 
 const port = 5000;
 
-app.listen(port, ()=> console.log('sss'));
+app.listen(port, () => console.log("sss"));

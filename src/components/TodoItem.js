@@ -45,14 +45,14 @@ class TodoItem extends Component{
       {
         !this.state.updateChecked?
         <div className="todoItem" >
-          <div>
+          <div className="todoTitle">
             {this.props.item.text}
+          </div>
+          <div className="todoDate">
+            Date:{this.props.item.post_date}
           </div>
           <div>
             <button className="btnEdit" onClick={this.setUpdateCheck}>Edit</button>
-          </div>
-          <div>
-            {this.props.item.post_date}
           </div>
           <div>
             <button className="btnDlt" onClick={this.deleteTodo}>Delete</button>
@@ -60,20 +60,14 @@ class TodoItem extends Component{
         </div>
         :
         <div className="todoItem" >
-          <div>
-            <input type="text" value={this.state.curr_post} onChange={this.updatePostValue}/>
-          </div>
-          <div>
-            <button className="btnSave" onClick={this.updateTodo}>Save</button>
+          <div className="todoTitleEdit">
+            <input className="edit-input" type="text" value={this.state.curr_post} onChange={this.updatePostValue}/>
           </div>
           <div>
             <button className="btnCancel" onClick={this.reInitPostValue}>Cancel</button>
           </div>
           <div>
-            Date
-          </div>
-          <div>
-            <button className="btnDlt" onClick={this.deleteTodo}>Delete</button>
+            <button className="btnSave" onClick={this.updateTodo}>Save</button>
           </div>
         </div>
 

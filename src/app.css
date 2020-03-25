@@ -1,55 +1,169 @@
 body{
   padding:50px;
-  background-color: #696969;
+  background-color: #0F2D2F;
   font-family: sans-serif;
 }
+
 
 #container{
   display: flex;
   justify-content: flex;
 }
 
-.todoList .todoAdd input {
+.signButton{
   padding:10px;
   font-size: 16px;
-  background-color: #D3D3D3;
-  border: 2px solid #D3D3D3;
-  margin-bottom:20px;
-  width: 300px;
+  background-color: #70659A;
+  color: #FFF;
+  border: 2px solid #70659A;
   border-radius: 15px;
+  margin-top:20px;
+  margin-left:100px;
+}
+.signButton:hover{
+  cursor:pointer;
+  filter: brightness(0.9);
 }
 
-.todoList .todoAdd button {
+.form-input{
+  padding:10px;
+  background-color: #FFFFFF;
+  border: 2px solid #FFFFFF;
+  width: 150px;
+  border-radius: 15px;
+  text-align: center;
+  border-color: #3EB489;
+  margin-bottom: 10px;
+}
+
+.app{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.app .header{
+  background-color: #c3e6ce;
+  overflow: hidden;
+  width:800px;
+  margin: 20px auto;
+  margin-top:0px;
+  padding:20px;
+  border-radius: 30px;
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.header a {
+  float: left;
+  color: #3EB489;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 30px;
+  text-decoration: bold;
+  text-shadow: 1px 2px #3EB489;
+
+}
+
+.sign-container{
+  background-color: #c3e6ce;
+  opacity:1;
+  width:800px;
+  height :400px;
+  margin: 20px auto;
+  padding: 50px;
+  border-radius: 30px;
+  display:flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.todolist-container {
+  background-color: #c3e6ce;
+  opacity:1;
+  width:800px;
+  height :700px;
+  margin: 20px auto;
+  padding: 50px;
+  border-radius: 30px;
+  display:flex;
+  flex-direction: column;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+}
+
+.todolist-container h1{
+  color:#ff98cc;
+  margin-left:60px;
+  padding:10px;
+}
+
+
+/*add container*/
+.todolist-container .todoAdd {
+  background-color: #00000;
+  padding:25px;
+}
+
+.todolist-container .todoAdd input {
+  padding:10px;
+  margin-left:50px;
+  background-color: #D3D3D3;
+  border: 2px solid #D3D3D3;
+  width: 300px;
+  border-radius: 15px;
+  text-align: center;
+  border-color: #3EB489;
+}
+
+
+
+.todolist-container .todoAdd button {
   padding:10px;
   font-size: 16px;
   margin: 10px;
-  background-color: #FF0000;
+  background-color: #70659A;
   color: #FFF;
-  border: 2px solid #FF0000;
+  border: 2px solid #70659A;
   border-radius: 15px;
 }
 
-.todoList .todoAdd button:hover {
-  background-color: #800000;
-  border: 2px solid #800000;
+.todolist-container .todoAdd button:hover {
+  filter: brightness(0.9);
   cursor:pointer;
 }
 
+.todolist-container .sortable-container .sortable-list{
+  padding:20px;
+  display:flex;
+  flex-wrap:wrap;
+  align-content: flex-start;
+  overflow-y:auto;
+  height:530px;
+}
+
+
+
 .todoItem {
+  display:grid;
+  grid-template-rows: 20px 20px 30px;
+  grid-template-columns: 50px 50px;
+  row-gap:20px;
+  column-gap:50px;
   background-color: rgba(255,255,255,.6);
-  padding: 15px;
-  margin: 20px auto;
+  padding: 20px;
+  margin:10px;
   border-radius: 5px;
   list-style:none;
-  width:300px;
-  display:grid;
-  grid-template-columns: 0px 50px;
+  width:200px;
 }
 
 
 .todoItem:hover{
-  background-color: rgba(255,255,255,.4);
-  cursor:pointer;
+  text-decoration: underline;
+  cursor:grabbing;
 }
 
 .todoItem button:hover{
@@ -61,29 +175,76 @@ body{
 .todoItem .btnEdit{
   background-color: #FF6500;
   color: #FFF;
-  margin-left: 230px;
-  border-radius: 5px;
-  border: 2px solid #FF6500;
+  border-radius: 30px;
+  border: 4px solid #FF6500;
   list-style:none;
-  width:70px;
+  width:80px;
 }
 .todoItem .btnDlt{
   background-color: #FF0000;
-  margin-top: 5px;
-  margin-left: 230px;
-  border-radius: 5px;
+  border-radius: 30px;
   color: #FFF;
-  border: 2px solid #FF0000;
+  border: 4px solid #FF0000;
   list-style:none;
   width:70px;
 }
 .todoItem .btnSave{
-  background-color: #1E90FF;
-  margin-top: 5px;
-  margin-left: 230px;
-  border-radius: 5px;
+  background-color: #70659A;
+  border-radius: 30px;
   color: #FFF;
-  border: 2px solid #1E90FF;
+  border: 4px solid #70659A;
   list-style:none;
   width:70px;
+}
+
+.todoItem .btnCancel{
+  background-color: #FF6500;
+  color: #FFF;
+  border-radius: 30px;
+  border: 4px solid #FF6500;
+  list-style:none;
+  width:80px;
+}
+
+.todoItem .todoDate{
+  grid-column: 1/4;
+  text-decoration: underline;
+  text-decoration-color: rgba(0,0,0,.6);
+  color: rgba(0,0,0,.6);
+  font-size: 12px;
+}
+
+
+.todoItem .todoTitle{
+  grid-column: 1/4;
+  text-decoration: bold;
+  color: rgba(0,0,0,.8);
+  font-size: 30px;
+}
+
+.todoItem .todoTitleEdit{
+  grid-column: 1/2;
+  text-decoration: bold;
+  color: rgba(0,0,0,.8);
+  font-size: 30px;
+}
+
+.edit-input{
+  padding:10px;
+  background-color: #FFFFFF;
+  border: 2px solid #FFFFFF;
+  width: 150px;
+  border-radius: 15px;
+  text-align: center;
+  border-color: #3EB489;
+}
+
+.errorMsg{
+  font-size:12px;
+  color:#FF0000;
+}
+
+.successMsg{
+  font-size:12px;
+  color:#70659A;
 }
