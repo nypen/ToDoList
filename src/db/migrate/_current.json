@@ -1,0 +1,13 @@
+{
+    "tables": {
+        "posts": {
+            "tableName": "posts",
+            "indexes": []
+        },
+        "users": {
+            "tableName": "users",
+            "indexes": []
+        }
+    },
+    "revision": 1
+}

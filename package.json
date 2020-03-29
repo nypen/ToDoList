@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server --watch && node server.js localhost",
-    "server": "nodemon server.js"
+    "server": "nodemon server.js",
+    "migrate": "npx runmigration"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +25,7 @@
     "body-parser": "^1.19.0",
     "concurrently": "^5.1.0",
     "express": "^4.17.1",
+    "express-session": "^1.17.0",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "pg": "^7.18.2",
@@ -32,7 +34,9 @@
     "react-dom": "^16.8.1",
     "react-router-dom": "^5.1.2",
     "react-sortablejs": "^2.0.11",
-    "sequelize": "^5.21.5"
+    "sequelize": "^5.21.5",
+    "sequelize-auto-migrations": "^1.0.3",
+    "sequelize-cli": "^5.5.1"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.9.0",

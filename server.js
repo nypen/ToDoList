@@ -1,72 +1,94 @@
 const express = require("express");
-const app = express();
+const session = require("express-session");
 const bodyParser = require("body-parser");
-const Sequelize = require('sequelize');
-const db = require("./src/database");
-const Todo = require("./models/Posts");
-const User = require("./models/Users");
+const { posts: Todo, users: User, Sequelize, sequelize } = require("./models");
 const passport = require("./passport");
+const app = express();
 
 
-//test db
-db.authenticate()
+sequelize
+  .authenticate()
   .then(() => console.log("db connected"))
   .catch(err => console.log(err));
 
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(passport.initialize())
-app.use(passport.session())
+app.use(
+  session({
+      secret: 'green-india',  //pick a random string to make the hash that is generated secure
+      resave: false,
+      saveUninitialized: false
+  })
+)
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 
-app.post("/api/signup",async (req,res) => {
-    const user = await User.findOne({ where: { username: req.body.username } });
-    if(user){
-      res.json({
-          error: `Sorry, that username already exists with ${req.body.username}`
-      })
-    }else{
-      const newUser = await User.create({
-        username: req.body.username,
-        password: req.body.password
-      })
-      res.json(newUser);
-    }
+app.get("/api/getuser",async (req,res)=>{
+  if(req.isAuthenticated()){
+    console.log('authenticated user')
+    res.json({user:req.user})
+  }else{
+    console.log('no user auth')
+    res.json({user:null})
   }
-);
+})
 
-app.post('/api/signin', (req, res, next) => {
-  const { body: { user } } = req;
-  return passport.authenticate('local', (err, passportUser, info) => {
-    if(err) {
-      return next(err);
-    }
-    if(passportUser) {  //authenticated
-      console.log('user id '+passportUser.id)
-      return res.json({
-        user_id: passportUser.id,
-        username: passportUser.Username
-      });
-    }
-    return res.json({status:400});
-  })(req, res, next);
+app.post("/api/logout",async (req,res)=>{
+  if(req.isAuthenticated()){
+    req.logout()
+    res.end()
+  }
+  res.end()
+
+})
+
+app.post("/api/signup", async (req, res) => {
+  const user = await User.findOne({ where: { username: req.body.username } });
+  if (user) {
+    res.json({
+      error: `Sorry, that username already exists with ${req.body.username}`
+    });
+  } else {
+    const newUser = await User.create({
+      username: req.body.username,
+      password: req.body.password
+    });
+    res.json(newUser);
+  }
 });
 
+app.post("/api/signin", (req, res, next) => {
+  console.log(req.body)
+  /* the above is only for debugging and will print in the terminal -  { username: 'rohanpaul2@gmail.com', password: '123456' }  */
+  next()
+  },
+  passport.authenticate('local'),
+  (req, res) => {
+  console.log('loggedin', req.user);
+  
+  var userInfo = {
+      username: req.user.username
+  };
+  res.send(userInfo)
+});
 
 app.post("/api/todos", async (req, res) => {
   console.log("Find all posts");
+  console.log("user is ",req.user,req.isAuthenticated())
+
   allTodos = await Todo.findAll({
-    attributes: ["id", "text", "post_date", "user_id","order"],
+    attributes: ["id", "text", "post_date", "user_id", "order"],
     where: {
-      user_id: req.body.user_id
+      user_id: req.user.id
     },
-    order:[['order', 'ASC']]
+    order: [["order", "ASC"]]
   });
 
   res.json(allTodos);
 });
-
 
 app.post("/api/addtodo", async (req, res) => {
   var d = new Date();
@@ -110,46 +132,53 @@ app.post("/api/updateTodo", async (req, res) => {
 });
 
 app.post("/api/updateOrder", async (req, res) => {
-  console.log('update order in server on '+req.body.id+ ' with new order '+req.body.index);
-  if(req.body.oldIndex<req.body.newIndex){
+  console.log(
+    "update order in server on " +
+      req.body.id +
+      " with new order " +
+      req.body.index
+  );
+  if (req.body.oldIndex < req.body.newIndex) {
     const incr = await Todo.increment(
       {
         order: -1
       },
       {
-        where:{
-          order:{
+        where: {
+          order: {
             [Sequelize.Op.lte]: req.body.newIndex,
             [Sequelize.Op.gt]: req.body.oldIndex
           },
-          id:{
+          id: {
             [Sequelize.Op.ne]: req.body.id
           }
         }
-      });
-  }else{
+      }
+    );
+  } else {
     const incr = await Todo.increment(
       {
         order: 1
       },
       {
-        where:{
-          order:{
+        where: {
+          order: {
             [Sequelize.Op.gte]: req.body.newIndex,
             [Sequelize.Op.lt]: req.body.oldIndex
           },
-          id:{
+          id: {
             [Sequelize.Op.ne]: req.body.id
           }
         }
-      });
+      }
+    );
   }
   const updated = await Todo.update(
     {
-      order: req.body.newIndex  //h seira pou tha mpei
+      order: req.body.newIndex //h seira pou tha mpei
     },
     {
-      where:{
+      where: {
         id: req.body.id
       }
     }
@@ -157,8 +186,6 @@ app.post("/api/updateOrder", async (req, res) => {
   res.json(updated);
 });
 
-
-
 const port = 5000;
 
-app.listen(port, () => console.log("sss"));
+app.listen(port, () => console.log("Server is listening on port",port));

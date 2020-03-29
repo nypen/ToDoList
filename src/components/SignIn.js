@@ -8,7 +8,6 @@ class SignIn extends Component{
     this.state = {
       username: '',
       password: '',
-      redirectTo: null,
       failMsg:null,     //invalid user-name or pass
       unfillMsg:null      //
     }
@@ -41,6 +40,7 @@ class SignIn extends Component{
     }
     const options = {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json"
       },
@@ -67,9 +67,6 @@ class SignIn extends Component{
 }
 
   render() {
-    if (this.state.redirectTo) {
-      return "loggen in "
-    }else{
       return(
         <div className="signin">
           <h4>Login</h4>
@@ -111,7 +108,7 @@ class SignIn extends Component{
     </div>
     )
   }
-}
+
 }
 
 export default SignIn;

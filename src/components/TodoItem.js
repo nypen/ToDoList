@@ -48,11 +48,14 @@ class TodoItem extends Component{
           <div className="todoTitle">
             {this.props.item.text}
           </div>
-          <div className="todoDate">
-            Date:{this.props.item.post_date}
-          </div>
           <div>
             <button className="btnEdit" onClick={this.setUpdateCheck}>Edit</button>
+          </div>
+          <div className="todoDate">
+            Username:{this.props.username}
+          </div>
+          <div className="todoDate">
+            Date:{this.props.item.post_date}
           </div>
           <div>
             <button className="btnDlt" onClick={this.deleteTodo}>Delete</button>
@@ -61,14 +64,16 @@ class TodoItem extends Component{
         :
         <div className="todoItem" >
           <div className="todoTitleEdit">
-            <input className="edit-input" type="text" value={this.state.curr_post} onChange={this.updatePostValue}/>
-          </div>
-
-          <div className="todoDate">
-              {this.props.item.post_date}
+            <input className="edit-input"  type="text" value={this.state.curr_post} onChange={this.updatePostValue} autofocus/>
           </div>
           <div>
             <button className="btnCancel" onClick={this.reInitPostValue}>Cancel</button>
+          </div>
+          <div className="todoDate">
+            Username:{this.props.username}
+          </div>
+          <div className="todoDate">
+            Date:{this.props.item.post_date}
           </div>
           <div>
             <button className="btnSave" onClick={this.updateTodo}>Save</button>

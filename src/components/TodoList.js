@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { ReactSortable } from "react-sortablejs";
 import TodoItem from "./TodoItem";
+import {Redirect} from 'react-router-dom' ;
 import "../app.css";
 
 class TodoList extends Component {
@@ -9,7 +10,7 @@ class TodoList extends Component {
     this.state = {
       todos: [],
       user_id: this.props.user_id,
-      username: this.props.username
+      username: this.props.username,
     };
     this.addTodo = this.addTodo.bind(this);
     this.updateOrder = this.updateOrder.bind(this);
@@ -23,6 +24,7 @@ class TodoList extends Component {
     };
     const options = {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json"
       },
@@ -30,17 +32,21 @@ class TodoList extends Component {
     };
     fetch("/api/todos",options)
       .then(res => {
-        console.log('renew');
         res.json().then(new_todos => {
           this.setState({ todos: new_todos });
         });
       })
       .catch(err => console.log(err));
-      console.log('why');
   }
 
   componentDidMount() {
-    this.renewTodos();
+    if(this.state.username){
+      this.renewTodos();
+    }else{
+      this.setState({
+        redirectTo:"/login"
+      })
+    }
   }
 
   addTodo(e) {
@@ -137,37 +143,38 @@ class TodoList extends Component {
 
 
   render() {
-    console.log(this.state.todos);
-    return (
-      <div  className="todolist-container">
-        <div className="todoAdd">
-          <form onSubmit={this.addTodo}>
-            <input ref="todoItem" type="text" placeholder="Type new task" />
-            <button type="submit">Add</button>
-          </form>
+      return (
+        <div  className="todolist-container">
+          <div className="todoAdd">
+            <form onSubmit={this.addTodo}>
+              <input ref="todoItem" type="text" placeholder="Type new task" />
+              <button type="submit">Add</button>
+            </form>
+          </div>
+          <div className="sortable-container">
+            <ReactSortable
+              className = "sortable-list"
+              list={this.state.todos}
+              setList={newState => this.setState({ todos: newState })}
+              onEnd={this.updateOrder}
+              animation={150}
+            >
+              {this.state.todos &&
+                this.state.todos.map(todo => (
+                  <TodoItem
+                    item={todo}
+                    username={this.props.username}
+                    key={todo.id}
+                    deleteTodo={this.deleteTodo.bind(this)}
+                    updateTodo={this.updateTodo.bind(this)}
+                  />
+                ))}
+            </ReactSortable>
+          </div>
         </div>
-        <div className="sortable-container">
-          <ReactSortable
-            className = "sortable-list"
-            list={this.state.todos}
-            setList={newState => this.setState({ todos: newState })}
-            onEnd={this.updateOrder}
-            animation={150}
-          >
-            {this.state.todos &&
-              this.state.todos.map(todo => (
-                <TodoItem
-                  item={todo}
-                  key={todo.id}
-                  deleteTodo={this.deleteTodo.bind(this)}
-                  updateTodo={this.updateTodo.bind(this)}
-                />
-              ))}
-          </ReactSortable>
-        </div>
-      </div>
-    );
+      );
+
+    
   }
 }
-
 export default TodoList;

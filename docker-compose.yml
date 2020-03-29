@@ -1,11 +1,14 @@
-version: '2'
+version: "3"
 services:
   database:
     image: "postgres" # use latest official postgres version
+    ports:
+      - "5000:5432"
     environment:
-      POSTGRES_USER: "db_user"
-      POSTGRES_PASSWORD: "password"
-      POSTGRESS_DB: "db_name"
+      - POSTGRES_USER=db_user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=db_name
+      - POSTGRES_HOST=localhost
     volumes:
       - database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
 
